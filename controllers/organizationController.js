@@ -14,7 +14,7 @@ const orgController = {
       res.json({ data: newOrg });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ message: error.message, error });
     }
   },
   //gets all Organizations in db
@@ -25,7 +25,7 @@ const orgController = {
       res.json(orgData);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ message: error.message, error });
     }
   },
   //takes in queries and returns an object containing any documents that contain all of the provided queries
@@ -55,7 +55,7 @@ const orgController = {
             },
           },
         ];
-        // pass the pipeline into the aggregate method and return the results as res.json in a data object. 
+        // pass the pipeline into the aggregate method and return the results as res.json in a data object.
         const result = await Organization.aggregate(pipeline);
         res.json({ data: result });
       } else {
@@ -63,7 +63,7 @@ const orgController = {
       }
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ message: error.message, error });
     }
   },
   //takes in queries and returns an object containing all documents that contain a field that matches any of the queries
@@ -81,7 +81,7 @@ const orgController = {
           {
             $unwind: "$addresses",
           },
-          //all steps in this function are the same as above except we are using the $or operator 
+          //all steps in this function are the same as above except we are using the $or operator
           //to include all documents that have at least 1 query allowing for a broader search.
           {
             $match: {
@@ -95,7 +95,7 @@ const orgController = {
         res.send({ message: "No search terms received." });
       }
     } catch (error) {
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ message: error.message, error });
     }
   },
   //takes a passed in ID and returns matching Organization
@@ -106,7 +106,7 @@ const orgController = {
       res.json(orgData);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ message: error.message, error });
     }
   },
   //takes a passed in ID and updates to new values
@@ -133,33 +133,33 @@ const orgController = {
       res.status(200).json(updatedOrg);
     } catch (error) {
       console.error("Error", error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).json({ message: error.message, error });
     }
   },
   //takes a passedin ID and deletes the associated organization
   async deleteOrg(req, res) {
     try {
       const orgId = req.params.orgId;
-  
+
       const existingOrg = await Organization.findById(orgId);
       if (!existingOrg) {
-        return res.status(404).send('Organization not found with the given ID');
+        return res.status(404).send("Organization not found with the given ID");
       }
-  
+
       const deletedOrg = await Organization.findByIdAndDelete(orgId);
-  
+
       if (!deletedOrg) {
-        return res.status(500).send('Failed to delete the organization');
+        return res.status(500).send("Failed to delete the organization");
       }
-  
-      res.status(200).json({ message: 'Organization deleted successfully', deletedOrg });
+
+      res
+        .status(200)
+        .json({ message: "Organization deleted successfully", deletedOrg });
     } catch (error) {
-      console.error('Error', error);
-      res.status(500).send('Internal Server Error');
+      console.error("Error", error);
+      res.status(500).json({ message: error.message, error });
     }
-  }
+  },
 };
 
-
 module.exports = orgController;
-
