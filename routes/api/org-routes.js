@@ -1,5 +1,4 @@
 const router = require("express").Router();
-
 const {
   getOrgs,
   createOrg,
@@ -8,12 +7,15 @@ const {
   getSingleOrg,
   updateOrg,
   deleteOrg,
-} = require("../controllers/organizationController");
+} = require("../../controllers/organizationController");
+const adminCheck = require("../../utils/adminCheck");
 
+router.use(adminCheck);
 
-router.route("/").get(getOrgs).post(createOrg);
-router.route("/:orgId/").get(getSingleOrg).put(updateOrg).delete(deleteOrg);
+router.post("/create", createOrg);
+router.get("/", getOrgs);
 router.get("/:orgId/matchAll", matchAllQueries);
 router.get("/:orgId/matchAny", matchAnyQueries);
+router.route("/:orgId/").get(getSingleOrg).put(updateOrg).delete(deleteOrg);
 
 module.exports = router;
