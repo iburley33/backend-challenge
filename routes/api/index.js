@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { login } = require("../../controllers/loginController");
-const orgRoute = require("./api/org-routes");
-const userRoute = require("./api/user-routes");
+const orgRoute = require("./org-routes");
+const userRoute = require("./user-routes");
 
 router.post("/login", login);
 router.use("/organization", orgRoute);

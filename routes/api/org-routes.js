@@ -14,8 +14,8 @@ router.use(adminCheck);
 
 router.post("/create", createOrg);
 router.get("/", getOrgs);
-router.get("/:orgId/matchAll", matchAllQueries);
-router.get("/:orgId/matchAny", matchAnyQueries);
+router.get("/:orgId/matchall", matchAllQueries);
+router.get("/:orgId/matchany", matchAnyQueries);
 router.route("/:orgId/").get(getSingleOrg).put(updateOrg).delete(deleteOrg);
 
 module.exports = router;
