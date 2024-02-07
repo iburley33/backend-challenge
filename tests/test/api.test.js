@@ -172,7 +172,7 @@ describe("PUT /api/organization/orgId", function () {
   });
 });
 
-/* describe("DELETE /api/organization.orgId", function () {
+describe("DELETE /api/organization.orgId", function () {
   it("should delete the organization", function (done) {
     request(app)
       .delete(`/api/organization/${orgId}`)
@@ -180,24 +180,4 @@ describe("PUT /api/organization/orgId", function () {
       .expect(200)
       .end(done);
   });
-}); */
-/*
-describe("GET /api/organization/:orgId/matchall/", () => {
- 
-  it("should return an array of strings based on query parameters", async () => {
-      
-      const queryParams = {
-        param1: "city: Test City",
-        param2: "state: Test State",
-      };
-      const res = await request(app)
-        .get(`/api/organization/${orgId}/matchall/`)
-        .set("Authorization", `Bearer ${authToken}`)
-        .query(queryParams);
-        expect(res.body.array1).to.be.json;
-        expect(res.body.array1).to.be.an("array")
-    });
-  });
-
-
-*/
+});

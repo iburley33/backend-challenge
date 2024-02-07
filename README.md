@@ -4,7 +4,7 @@
 
 A video is linked below which will walk through use of this API.
 
-
+https://www.youtube.com/watch?v=nsy8sEQ0OYI&ab_channel=IanBurley
 
 ## Getting started
 
@@ -202,6 +202,10 @@ Please note that you will need to copy an id from an organization after hitting 
 # Mocha Testing
 Please ensure that you have first run the **npm run seed** command in the terminal prior to testing. For tests to run appropriately you must have a .env file in your Tests folder that matches the .env in your server folder.
 
-From the Tests folder terminal run the following script to execute mocha testing:
+From the Tests folder terminal run the following script to first install dependencies:
+
+**npm i**
+
+Then from the Tests folder terminal run the following script to first begin Mocha testing:
 
 **npm run test**
