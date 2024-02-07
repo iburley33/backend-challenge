@@ -2,8 +2,8 @@ const orgData =[
     {
       name: "TechCorp",
       addresses: [
-        { street: "123 Main St", city: "TechCity", country: "Techland" },
-        { street: "456 Tech Ave", city: "TechVille", state: "TC", zip: "98765", country: "Techtopia" }
+        { street: "123 Main St", city: "Techville", country: "Techland" },
+        { street: "456 Tech Ave", city: "Techville", state: "TC", zip: "98765", country: "Techtopia" }
       ]
     },
     {

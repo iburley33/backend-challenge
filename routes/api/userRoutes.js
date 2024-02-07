@@ -14,3 +14,4 @@ router.get("/", getUsers);
 router.route("/:userId").get(getSingleUser).post(createUser).delete(deleteUser);
 
 module.exports = router;
+

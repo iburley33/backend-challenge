@@ -55,8 +55,8 @@ const orgController = {
             },
           },
         ];
-        // pass the pipeline into the aggregate method and return the results as res.json in a data object.
-        const result = await Organization.aggregate(pipeline);
+        // pass the pipeline into the aggregate method and return the results as res.json in a data object. Using collation to remove case sensitivity improving ux.
+        const result = await Organization.aggregate(pipeline).collation({ locale: 'en_US', strength: 2 });
         res.json({ data: result });
       } else {
         res.send({ message: "No search terms received." });
@@ -89,7 +89,7 @@ const orgController = {
             },
           },
         ];
-        const result = await Organization.aggregate(pipeline);
+        const result = await Organization.aggregate(pipeline).collation({ locale: 'en_US', strength: 2 });
         res.json({ data: result });
       } else {
         res.send({ message: "No search terms received." });
