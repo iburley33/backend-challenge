@@ -1,132 +1,207 @@
-# EstateSpace Back End Development Challenge
+# API Documentation
 
-Hi! Thank you for your interest in [EstateSpace][eswebsite]. Our evaluation processes begins with an open-ended coding challenge that we will discuss during your interview. There is not one correct way to approach this challenge. Rather, we would like to see your approach and your creativity in solving the problem.
+## Video walkthrough
 
-We appreciate that any coding challenge represents an investment of your time. We hope you see the value in having a code sample that is relatable to both of us for the interview. Should you be unsuccessful, you should feel free to use the code you developed for this challenge in any way that you would like.
+A video is linked below which will walk through use of this API.
 
-If you are successful, then we will set up an in-person interview and use this code as the starting point in our conversation.
 
-# The Challenge
-EstateSpace uses a JavaScript-based stack currently, which means [Node.js][nodejs] on the backend. We develop microservices using Node. The challenge would be to write a microservice to read data from a database and return it using a REST based resource.
 
-Ideally, this would take a mid-level developer up to two hours to complete the minimum requirements.
+## Getting started
 
-## Minimum Server-side Challenge Requirements
-We would like a minimum server-side capability. These are:
-- A read route that returns a specific object when a specific id is specified.
+Prior to using any routes please run the following scripts in your terminal. They must be completed in the order they are listed:
 
-The basic format for the read route would conform to:
+**npm i** - Install all dependencies.
 
-`[VERB] [base]/[type]/[id]{?param1=value1{...&paramn=valuen}}`
+**npm run seed** - This will seed the database with data used for further testing.
 
-where:
-- `VERB` represents the HTTP verb (GET, POST, etc.)
-- `[]` denotes required information
-- `base` denotes the base URL, such as [http://localhost:8080](http://localhost:8080)
-- `type` denotes the microservice resource name, such as "Organization"
-- `id` denotes the object ID to look up
-- `{}` denotes optional values
-- `param` denotes the name in the datamodel to query against
-- `value` denotes the value to query for
-- `…` denotes that there can be any number of query parameters
+**npm start** - This will run your API server and allow for further testing via postman.
 
-## Data model
-Please base your data model off of this specification for an organization.
+## .env
 
-Organization:
+Now that dotenv is installed you will need to create a .env file in both the server folder and the test foldeer. There is an example.env included but your file must include:
 
-```js
+**JWT_SECRET**=*yoursecret*
+
+### Authentication Process
+
+Prior to logging in please ensure that you have run the command npm run seed in the terminal of the server file. You will need to login using the credentials provided below to receive a token. You will then need to include this token as a header in any User or Organization routes.
+
+**Bearer Token** 
+
+This Application is built to follow a strict Bearer token format. Protected route HTTP requests must be made with the following structure in the Authorzation value: 
+
+Bearer *token*
+
+After logging in you will receive a JWT as a response. This JWT will need to be included as a header in further testing as routes for user and organization require Admin access due to security protocols. Users who are not an Admin will not have access to any sensitive data. **Again, for the token to be accepted please use this format:**
+
+**Key:** *Authorization*
+
+
+**Value:** *Bearer* (insert token)
+
+## Login Controller
+
+
+
+**Login:** The login endpoint allows users to authenticate themselves by providing their email address and password and returns a JWT to the front end to be stored as a cookie. **The credentials below provide access to Admin priveleges and must be used for this test.**
+
+
+**Endpoint: POST http://localhost:3000/api/login**
+
+*Example Request Body:*
+
 {
-  "id": "", // unique identifier
-  "name": "", // name of the organization
-  "addresses": [] // array of locations
+
+  "email": "testadmin@test.com",
+  "password": "tomato"
+
 }
-```
 
-Location:
+**Responses:**
 
-```js
+200 OK - Successful login. Returns a JWT token for authentication.
+
+401 Unauthorized - Invalid email or password.
+
+**Authentication Headers:** 
+Once an admin is logged in, include the JWT token in the Authorization header of subsequent requests to authenticate the user.
+
+**Token Expiry:** The JWT token expires after 1 hour. After expiration, users need to log in again to obtain a new token.
+
+
+## Organization Controller
+
+### Retrieve All Organizations:
+
+**Endpoint: GET http://localhost:3000/api/organization**
+
+**Response:** Returns an array of all existing organization objects.
+
+### Query an individual organization
+
+The routes below will allow you to query organizations based on specific search values to isolate pertinent data. The queries provided should identify the key and value to match. Feel free to test any route but a good example is the "DataMasters" organization. Please note that you will need to copy an id from "DataMasters after hitting the retrieve all route. If you provide the below example in both routes the matchall route will provide 1 matching document, while the matchany route will return 3. 
+
+*For example http://localhost:3000/organization/:orgId/matchAny/?city=Byteville&state=FL.*
+
+**Endpoint: GET http://localhost:3000/api/organization/:orgId/matchall/?someQuery&someOtherQuery**
+
+**Response:** Returns a data object with locations that match all of the given queries. Based on the given example this response would only include locations in Byteville, FL.
+
+**Endpoint: GET http://localhost:3000/api/organization/:orgId/matchany/?someQuery&someOtherQuery**
+
+**Response:** Returns a data object with locations that match all of the given queries. Based on the given example this response would not only include locations in Baltimore but also all locations in the city of Byteville as well as any locations in FL.
+
+
+### Retrieve Single Organization:
+Please note that you will need to copy an id from an organization after hitting the retrieve all route.
+
+**Endpoint: GET http://localhost:3000/api/organization/:orgId**
+
+**Response:** Returns a single organization object matching the provided orgId.
+
+### Create Organization:
+
+**Endpoint: POST http://localhost:3000/api/organization/create**
+
+*Example Request Body:* 
+
 {
-  "street": "", // The postal address line; contains the house number, apartment number, street name, etc.
-  "city": "", // Name of the city, town, village or other community or delivery center.
-  "state": "", // Sub-division (e.g. state, province, or territory) of the country; abbreviations are accepted; ISO codes are not encouraged since this is a globalized field.
-  "zip": "", // A postal code designating a specific region, district, or zone as defined by the United States Postal Service (USPS).
-  "country": "" // Name of the country (aka nation). ISO-3166 3-letter codes can be used in place of a full country name.
+  name: Tech R Us,
+  addresses: [
+    {
+      "street": "896 Elmo Rd",
+      "city": "Springfield",
+      "state": "IL",
+      "zip": "31958",
+      "country": "USA"
+    }
+  ]
 }
-```
 
-## Where to concentrate your effort
-In a server-side microservices approach, there are many areas that need to be developed when creating an API. Working software is always top priority, however, so meet the minimum requirements. Should you want to go above and beyond the minimum requirements, please feel free to add to your submittal either via code or via documentation in [common mark][commonmark] compliant documentation.
-- Other routes
-  - a read all or search route that returns more than object
-  - a read route that returns one object by id
-  - a create route
-  - a delete route
-  - an update route using something like [jsonpatch](http://jsonpatch.com/)
-- Testing
-  - a [Mocha][mocha]-based test that shows the functionality working
-- Error handling
-  - Which HTTP Codes should be returned and under which circumstances?
-  - Should the user of the API get more information than an HTTP status code?
-  - Do integration tests reflect these error conditions?
-  - etc.
-- Data Modeling (ie. Mongoose for schema modeling)
-- Debug statements
-- [TDD]
-- Service security
-- HTTP header security
-- Encrypted communications
-- Caching
-- Microservice health checks
-- Database communications security
-- Code quality, such as unit test coverage
-- Style, such as using [ESLint][eslint] and specific rules, such as [Airbnb][airbnb-eslint]
-- Application to showcase using the backend API
+**Response:** Returns the created organization object.
 
-# Prerequisites
-- A basic understanding of source code control, [git][git-scm] is required.
-- You must make your code available via a [GitHub][github] account.
-- All JavaScript shall be written using [ES6][ES6] standards.
-- You should be familiar with creating data APIs.
+### Update Organization:
+Please note that you will need to copy an id from an organization after hitting the retrieve all route.
 
-# Getting Started
-1. Fork this [repository][repository].
-1. Clone the fork to your personal machine.
-1. Start coding.
-1. Commit changes to your fork as you see fit.
+**Endpoint: PUT http://localhost:3000/api/organization/:orgId**
 
-# Submission
+*Example Request Body:* 
 
-When you are comfortable with your results, please email your fork to
-[g3-dev@griffingroupglobal.com](mailto:g3-dev@griffingroupglobal.com). Please keep your emails short and to the point.
+{
 
-Any specific notes or further information you would like to add about your submittal, should be included in the GitHub project.
+  "name": "Tech R NOT Us ANYMORE"
 
-Do not feel as though you must create a public fork of this repository. You are free to create a throwaway GitHub account or private fork. In those cases, please let us know so that we may send you the GitHub IDs to add to the repository.
+}
 
-# Evaluations
+**Response:** Returns the updated organization object.
 
-We realize there are many items to look at when creating a microservice. Please do not feel like you have to do everything. Please do not feel like you must use Node, albeit that is our primary language platform. If you have less security experience, but more search and database experience, then use that to your advantage in the code you write. Give us a heads up by documenting your code to let us know where and why you concentrated on certain
-items.
+### Delete Organization:
+Please note that you will need to copy an id from an organization after hitting the retrieve all route.
 
-As you develop your solution, you may have ideas on other avenues to pursue. Please feel free to include them inline as documented source or as additional [Common Mark][commonmark] compliant notes in your fork.
+**Endpoint: DELETE http://localhost:3000/api/organization/:orgId**
 
-We look for creativity, originality, and a good user experience in your application if that's an area you focused on.
+**Response:** Returns a success message upon successful deletion as well as an object containing the details of the deleted organization.
 
-We look for readability, good architectural decisions, modularity, and a solid approach to testing in your code.
 
-# License
-This project is [MIT licensed][mitlicense].
+# User Controller
+## Retrieve Users
 
-[eswebsite]:https://www.estatespace.com
-[git-scm]:https://git-scm.com/
-[github]:https://github.com/
-[nodejs]:https://nodejs.org/en/
-[TDD]:https://en.wikipedia.org/wiki/Test-driven_development
-[ES6]:http://www.ecma-international.org/ecma-262/6.0/
-[eslint]:https://eslint.org/
-[airbnb-eslint]:https://www.npmjs.com/package/eslint-config-airbnb
-[mocha]:https://mochajs.org/
-[repository]:https://github.com/GriffinGroupGlobal/backend-challenge
-[mitlicense]:https://en.wikipedia.org/wiki/MIT_License
-[commonmark]:https://spec.commonmark.org/
+### Retrieve All Users:
+
+**Endpoint: GET http://localhost:3000/api/user**
+
+Response: Returns an array of all user objects in the database.
+
+### Retrieve Single User:
+Please note that you will need to copy an id from an organization after hitting the retrieve all route.
+
+**Endpoint: GET http://localhost:3000/api/user/:userId**
+
+**Response:** Returns a single user object matching the provided userId.
+
+## Create User:
+
+**Endpoint: POST http://localhost:3000/api/user/create**
+
+*Example Request Body:* 
+
+{
+
+  "email": "fakeemail@gmail.com",
+
+  "password": "fakepassword123",
+
+  "role": "Employee" 
+
+}
+
+**Response:** Returns the created user object.
+
+## Update User:
+Please note that you will need to copy an id from an organization after hitting the retrieve all route.
+
+**Endpoint: PUT http://localhost:3000/api/user/:userId**
+
+*Example Request Body:*
+
+{
+
+  "email": "updatedfakeemail@gmail.com"
+
+}
+
+**Response:** Returns the updated user object.
+
+## Delete User:
+Please note that you will need to copy an id from an organization after hitting the retrieve all route.
+
+**Endpoint: DELETE http://localhost:3000/api/user/:userId**
+
+**Response:** Returns a success message upon successful deletion.
+
+# Mocha Testing
+Please ensure that you have first run the **npm run seed** command in the terminal prior to testing. For tests to run appropriately you must have a .env file in your Tests folder that matches the .env in your server folder.
+
+From the Tests folder terminal run the following script to execute mocha testing:
+
+**npm run test**
